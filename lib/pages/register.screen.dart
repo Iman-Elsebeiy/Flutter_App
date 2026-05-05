@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerce_app/core/theme/app_color.dart';
+import 'package:ecommerce_app/utils/auth.dart';
 import 'package:ecommerce_app/utils/routes.dart';
-import 'package:flutter/material.dart';
 import 'package:ecommerce_app/widgets/custom_button.dart';
 import 'package:ecommerce_app/widgets/custom_text_form_field.dart';
+import 'package:flutter/material.dart';
 
 class RegScreen extends StatefulWidget {
   const RegScreen({super.key});
@@ -12,106 +14,143 @@ class RegScreen extends StatefulWidget {
 }
 
 class _RegScreenState extends State<RegScreen> {
+  final AuthService auth = AuthService();
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController name = TextEditingController();
-  final TextEditingController email = TextEditingController();
-  final TextEditingController password = TextEditingController();
+  final name = TextEditingController();
+  final email = TextEditingController();
+  final password = TextEditingController();
+
+  bool accepted = false;
+
+  @override
+  void dispose() {
+    name.dispose();
+    email.dispose();
+    password.dispose();
+    super.dispose();
+  }
+
+  Future<void> register() async {
+    var result = await auth.register(
+      email.text.trim(),
+      password.text.trim(),
+    );
+
+    if (!mounted) return;
+
+    if (result.user != null) {
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(result.user!.uid)
+          .set({
+        "name": name.text,
+        "email": email.text,
+      });
+
+      Navigator.pushReplacementNamed(context, Routes.main);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(result.error ?? "Register Failed")),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: SingleChildScrollView(
-            child: Form(
-              key: _formKey,
-              child: Column(
+      appBar: AppBar(title: const Text("Register")),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+
+              // Name
+              CustomTextFormField(
+                hintText: "Name",
+                prefixIcon: Icons.person,
+                controller: name,
+                validator: (v) {
+                  if (v == null || v.length < 3) {
+                    return "Min 3 chars";
+                  }
+                  return null;
+                },
+              ),
+
+              const SizedBox(height: 20),
+
+              // Email
+              CustomTextFormField(
+                hintText: "Email",
+                prefixIcon: Icons.email,
+                controller: email,
+                keyboardType: TextInputType.emailAddress,
+                textInputAction: TextInputAction.next,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Email is required";
+                  }
+                  if (!value.contains("@")) {
+                    return "Invalid email";
+                  }
+                  return null;
+                },
+              ),
+
+              const SizedBox(height: 20),
+
+              //Password
+              CustomTextFormField(
+                hintText: "Password",
+                prefixIcon: Icons.lock,
+                controller: password,
+                isPassword: true,
+                validator: (v) {
+                  if (v == null || v.length < 6) {
+                    return "Min 6 chars";
+                  }
+                  return null;
+                },
+              ),
+
+              const SizedBox(height: 20),
+
+              // Terms
+              Row(
                 children: [
-                  const SizedBox(height: 80),
-                  const Text(
-                    "Create Account",
-                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 40),
-                   CustomTextFormField(
-                    hintText: "Full name",
-                    prefixIcon: Icons.person,
-                    controller: name,
-                    keyboardType: TextInputType.url,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Name is required";
-                      }
-                      else if (value.length <3) {
-                        return "Name must be more than 3 characters";
-                      }
-                      return null;
+                  Checkbox(
+                    value: accepted,
+                    onChanged: (v) {
+                      setState(() => accepted = v!);
                     },
                   ),
-                  const SizedBox(height: 20),
-
-                  CustomTextFormField(
-                    hintText: "Email",
-                    prefixIcon: Icons.email,
-                    controller: email,
-                    keyboardType: TextInputType.emailAddress,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Email is required";
-                      }
-                      return null;
-                    },
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  CustomTextFormField(
-                    hintText: "Password",
-                    prefixIcon: Icons.lock,
-                    controller: password,
-                    isPassword: true,
-                    validator: (value) {
-                      if (value == null || value.length < 6) {
-                        return "Password must be at least 6 chars";
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Checkbox(value: false, onChanged: (value) => {}),
-                      Text(
-                        "I accept the condotions",
-                        style: TextStyle(color: AppColor.grey),
-                      ),
-                      TextButton(
-                        onPressed: () {},
-                        child: Text(
-                          "Privacy",
-                          style: TextStyle(color: AppColor.heading),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: CustomButton(
-                      text: 'sign up',
-                      textColor: AppColor.white,
-                      backgroundColor: AppColor.orange,
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          Navigator.pushReplacementNamed(context, Routes.main);
-                        }
-                      },
-                    ),
-                  ),
+                  const Text("Accept terms"),
                 ],
               ),
-            ),
+
+              const SizedBox(height: 20),
+
+              // Button
+              CustomButton(text: 
+              'Register',
+              textColor:AppColor.white,
+               onPressed: (){
+                 {
+                  if (!_formKey.currentState!.validate()) return;
+
+                  if (!accepted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Accept terms first")),
+                    );
+                    return;
+                  }
+
+                  register();
+              }})
+            ],
           ),
         ),
       ),

@@ -55,8 +55,10 @@ class _CustomTextFormFieldState
                 },
               )
             : null,
-        contentPadding:
-            const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 16,
+          horizontal: 12,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
         ),
