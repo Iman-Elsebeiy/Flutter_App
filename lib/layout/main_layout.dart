@@ -1,4 +1,4 @@
-
+import 'package:ecommerce_app/pages/add_product.dart';
 import 'package:flutter/material.dart';
 // import 'package:provider/provider.dart';
 import '../core/theme/app_color.dart';
@@ -19,7 +19,7 @@ class _MainLayoutState extends State<MainLayout> {
   final List<Widget> screens = const [
     HomeScreen(),
     CartScreen(),
-    Center(child: Text("Favorite")),
+    AddProductScreen(),
     Center(child: Text("Profile")),
   ];
 
@@ -110,7 +110,7 @@ class _MainLayoutState extends State<MainLayout> {
                   ? Icons.favorite
                   : Icons.favorite_border,
             ),
-            label: "Favorite",
+            label: "Add product",
           ),
 
           /// PROFILE

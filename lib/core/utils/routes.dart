@@ -5,4 +5,5 @@ class Routes {
   static const String reg = '/register';
   static const String splash = '/';
   static const String main = '/main';
+  static const addProduct = "/add-product";
 }

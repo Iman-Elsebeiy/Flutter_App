@@ -89,7 +89,7 @@ class CartScreen extends StatelessWidget {
                     boxShadow: [
                       BoxShadow(
                         blurRadius: 10,
-                        color:AppColor.black.withOpacity(0.05),
+                        color:AppColor.black.withValues(),
                       )
                     ],
                   ),

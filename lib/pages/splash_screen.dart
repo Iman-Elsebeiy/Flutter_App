@@ -2,7 +2,7 @@ import 'package:ecommerce_app/core/constants/app_constants_assets.dart';
 import 'package:ecommerce_app/core/theme/app_color.dart';
 // import 'package:ecommerce_app/pages/home_screen.dart';
 // import 'package:ecommerce_app/pages/login_screen.dart';
-import 'package:ecommerce_app/utils/routes.dart';
+import 'package:ecommerce_app/core/utils/routes.dart';
 // import 'package:ecommerce_app/pages/register.screen.dart';
 import 'package:flutter/material.dart';
 import 'package:ecommerce_app/widgets/custom_button.dart';

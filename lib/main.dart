@@ -1,9 +1,10 @@
+import 'package:ecommerce_app/pages/add_product.dart';
 import 'package:flutter/material.dart';
 import 'package:ecommerce_app/pages/login_screen.dart';
 import 'package:ecommerce_app/pages/register.screen.dart';
 import 'package:ecommerce_app/pages/splash_screen.dart';
 import 'package:ecommerce_app/layout/main_layout.dart';
-import 'utils/routes.dart';
+import 'core/utils/routes.dart';
 import 'package:provider/provider.dart';
 import 'providers/cart_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
           Routes.login: (context) => const LoginScreen(),
           Routes.reg: (context) => const RegScreen(),
           Routes.main: (context) => const MainLayout(),
+          Routes.addProduct: (context) => const AddProductScreen(),
         },
       ),
     );

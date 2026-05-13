@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerce_app/core/theme/app_color.dart';
-import 'package:ecommerce_app/utils/auth.dart';
-import 'package:ecommerce_app/utils/routes.dart';
+import 'package:ecommerce_app/services/auth.dart';
+import 'package:ecommerce_app/core/utils/routes.dart';
 import 'package:ecommerce_app/widgets/custom_button.dart';
 import 'package:ecommerce_app/widgets/custom_text_form_field.dart';
 import 'package:flutter/material.dart';
@@ -48,7 +48,7 @@ class _RegScreenState extends State<RegScreen> {
         "email": email.text,
       });
 
-      Navigator.pushReplacementNamed(context, Routes.main);
+      Navigator.pushReplacementNamed(context, Routes.login);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(result.error ?? "Register Failed")),
