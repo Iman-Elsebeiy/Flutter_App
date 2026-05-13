@@ -25,7 +25,15 @@ class ProductCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Image.asset(image, height: 80),
+          Image.network(
+              image,
+              height: 80,
+              fit: BoxFit.cover,
+              loadingBuilder: (context, child, progress) {
+                if (progress == null) return child;
+                return const CircularProgressIndicator();
+              },
+            ),
           const SizedBox(height: 8),
           Text(name),
           const SizedBox(height: 5),
@@ -40,6 +48,7 @@ class ProductCard extends StatelessWidget {
                 "name": name,
                 "price": double.parse(price),
                 "image": image,
+
               });
 
               ScaffoldMessenger.of(context).showSnackBar(

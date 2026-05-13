@@ -63,91 +63,52 @@ class _AddProductScreenState
       });
     }
   }
+Future<void> addProduct() async {
 
-  Future<String> uploadImage() async {
-
-    final fileName =
-        DateTime.now().millisecondsSinceEpoch
-            .toString();
-
-    final ref = FirebaseStorage.instance
-        .ref()
-        .child("products")
-        .child(fileName);
-
-    await ref.putFile(selectedImage!);
-
-    return await ref.getDownloadURL();
+  if (selectedImage == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Select image first")),
+    );
+    return;
   }
 
-  Future<void> addProduct() async {
+  setState(() => isLoading = true);
 
-    if (selectedImage == null) {
+  try {
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Select image first"),
-        ),
-      );
+  // ImgBB
+    const imageUrl = "https://i.ibb.co/8DD1BFmw/s.png";
 
-      return;
-    }
+    await FirebaseFirestore.instance.collection("products").add({
+      "name": name.text,
+      "price": double.parse(price.text),
+      "image": imageUrl,
+      "description": description.text,
+      "createdAt": Timestamp.now(),
+    });
 
-    setState(() => isLoading = true);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Product Added")),
+    );
 
-    try {
+    name.clear();
+    price.clear();
+    description.clear();
 
-      final imageUrl =
-          await uploadImage();
+    setState(() {
+      selectedImage = null;
+    });
 
-      await FirebaseFirestore.instance
-          .collection("products")
-          .add({
+  } catch (e) {
 
-        "name": name.text,
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(e.toString())),
+    );
 
-        "price":
-            double.parse(price.text),
-
-        "image": imageUrl,
-
-        "description":
-            description.text,
-
-        "createdAt": Timestamp.now(),
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Product Added"),
-        ),
-      );
-
-      name.clear();
-
-      price.clear();
-
-      description.clear();
-
-      setState(() {
-
-        selectedImage = null;
-      });
-
-    } catch (e) {
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-        ),
-      );
-
-    } finally {
-
-      setState(() => isLoading = false);
-    }
+  } finally {
+    setState(() => isLoading = false);
   }
-
+}
   @override
   Widget build(BuildContext context) {
 
@@ -184,7 +145,7 @@ class _AddProductScreenState
                     decoration: BoxDecoration(
 
                       border: Border.all(
-                        color: Colors.grey,
+                        color: AppColor.grey,
                       ),
 
                       borderRadius:
